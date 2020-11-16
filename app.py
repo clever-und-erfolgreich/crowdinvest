@@ -9,6 +9,14 @@ def main():
     ##General Settings
     st.set_page_config(page_title='CLUE - Crowdinvesting Rechner', page_icon='logo.jpg')
     
+    ## Hide Hamburger Menu
+    hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        </style>
+        """
+    st.markdown(hide_menu_style, unsafe_allow_html=True)
+
     st.success('Diversifikationsrechner - Rechne deine Investition durch')
 
     col1, col2 = st.beta_columns([1,3])
