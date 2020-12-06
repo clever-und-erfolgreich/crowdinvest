@@ -1,5 +1,6 @@
 import pandas as pd
 from IPython.core.display import HTML
+from pandas.io.pytables import IndexCol
 import streamlit as st
 
 
@@ -49,22 +50,22 @@ def main():
         df3['Zinssatz netto'] = int_netto[0][0]
         df3['Anlagebetrag-Entwicklung'] = round(df3['Jahresanfang'].astype(int) / ((1 + int_netto[0][0].astype(float) / 100) ** (df3['Jahr'][0].astype(int) - df3['Jahr'].astype(int))), 2)
         df3['Zinsen p.a.'] = df3['Anlagebetrag-Entwicklung'].diff().fillna(0)
-        df_out = df3[['Jahr','Anlagebetrag-Entwicklung', 'Zinsen p.a.']].set_index('Jahr')
+        df_out = pd.DataFrame(df3[['Jahr', 'Anlagebetrag-Entwicklung', 'Zinsen p.a.']]).set_index('Jahr')
+        df_new = df_out[['Anlagebetrag-Entwicklung', 'Zinsen p.a.']].style.set_precision(2)
+        
         
         df_Zins = 'Zinsertrag (netto) über Projektaufzeit: ' + round(df_out['Zinsen p.a.'].sum(), 2).astype(str) + ' EUR'
         df_risk = 'Die Investition in ' + round(1 / (int_netto / 100), 2).astype(str) + ' Projekte kompensiert ein Ausfall.'
-        df_invest = 'Dies bedeutet, dass du ' + (df3['Jahresanfang'].astype(int) * round(1 / (int_netto[0][0] / 100), 2)).astype(str) + ' EUR in verschiedene Projekte investieren müsstest.'
+        df_invest = 'Dies bedeutet, dass du ' + (df3['Jahresanfang'].astype(int) * round(1 / (int_netto[0][0] / 100), 2)).astype(str) + '0 EUR in verschiedene Projekte investieren müsstest.'
 
     
     with col2:
-        st.table(df_out)
+        st.table(df_new)
     
     #st.bar_chart(df_out['Zinsen p.a.'])
         
-    st.text(df_Zins)
-    st.text('Der Zinsertrag (netto) berücksichttigt Abgeltungssteuer und Soli, aber keinen Steuerfreibetrag')
-    st.text(df_risk[0][0])
-    st.text(df_invest[0])
+    st.text_area(df_Zins, 'Der Zinsertrag (netto) berücksichttigt Abgeltungssteuer und Soli, aber keinen Steuerfreibetrag.')
+    st.text_area(df_risk[0][0], df_invest[0])
     
         
     
